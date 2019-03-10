@@ -1,4 +1,5 @@
 import pandas as pd
+import arrow
 
 from ..describe import describe, Description
 from ..io import readCsv
@@ -31,7 +32,7 @@ def convertGeoAppToHourly(df):
     df_as_dicts = df.to_dict('records')
     # build a new list of dicts that has the datetimes converted so pandas can read them
     newdicts = []
-    for row in dicts:
+    for row in df_as_dicts:
         newdicts.append(
                     {'pickup_datetime':arrow.get(row['pickup_datetime']).format(),
                      'pickup_latitude': row['pickup_latitude'],
@@ -43,6 +44,8 @@ def convertGeoAppToHourly(df):
     new_df['pickup_datetime'] =  pd.to_datetime(new_df['pickup_datetime'])
     grouped = group_data_by_hour(new_df)
     # add columns
+    grouped['date'] = grouped.index.date
+    grouped['time'] = grouped.index.time
     grouped['hour'] = grouped.index.hour
     grouped['day']= grouped.index.day
     grouped['year'] = grouped.index.year
