@@ -5,10 +5,12 @@ from ..io import readCsv
 
 @describe(
     Description('hourly', 'Aggregates events by hour.', dockerImage='kitware/pysciencedock')
-        .input('table1', 'The first data table', type='file', deserialize=readCsv)
+        .input('table', 'The first data table', type='file', deserialize=readCsv)
         .output('grouped', 'The rolled up table', type='new-file', serialize=lambda df, fileName: df.to_csv(fileName))
 )
-
+def hourly(table):
+    return convertGeoAppToHourly(table)
+    
 def count(A):
     return A.count()
 
@@ -46,5 +48,4 @@ def convertGeoAppToHourly(df):
     grouped['year'] = grouped.index.year
     return grouped
 
-def hourly(table1):
-	return convertGeoAppToHourly(table)
+
